@@ -5,3 +5,8 @@
 .DS_Store
 /build
 /captures
+.idea
+gradle
+gradlew
+gradlew.bat
+*.iml
