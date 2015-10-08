@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FizioApp</string>
+    <string name="action_settings">Settings</string>
+    <string name="exer1_name">Exercise one</string>
+    <string name="exer2_name">Exercise two</string>
+    <string name="exer3_name">Exercise three</string>
+    <string name="exer1_desc">Description of the exercise one</string>
+    <string name="exer2_desc">Description of the exercise two</string>
+    <string name="exer3_desc">Description of the exercise three</string>
+    <string name="text">text</string>
+</resources>
