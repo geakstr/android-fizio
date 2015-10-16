@@ -64,5 +64,10 @@
                 android:id="@+id/somethingOther" />
         </RadioGroup>
     </FrameLayout>
-
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/radioLayout"
+        android:layout_toRightOf="@id/verticalLine" />
 </RelativeLayout>
