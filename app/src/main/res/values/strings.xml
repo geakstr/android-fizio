@@ -7,5 +7,8 @@
     <string name="exer1_desc">Description of the exercise one</string>
     <string name="exer2_desc">Description of the exercise two</string>
     <string name="exer3_desc">Description of the exercise three</string>
+    <string name="repeatCount">Number of repeats</string>
+    <string name="somethingElse">Something else</string>
+    <string name="somethingOther">Something other</string>
     <string name="text">text</string>
 </resources>
