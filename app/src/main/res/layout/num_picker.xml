@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/repeatCountShort"
+        android:id="@+id/textView"
+        android:layout_marginLeft="160dp"
+        android:layout_marginStart="160dp"
+        android:layout_above="@+id/repeatCountPicker"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/executionCountShort"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView"
+        android:layout_alignLeft="@+id/executionCountPicker"
+        android:layout_alignStart="@+id/executionCountPicker"
+        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/weight"
+        android:id="@+id/textView3"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_alignLeft="@+id/weightPicker"
+        android:layout_alignStart="@+id/weightPicker"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="18dp" />
+
+    <NumberPicker
+        android:id="@+id/repeatCountPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/executionCountPicker"
+        android:layout_alignRight="@+id/textView"
+        android:layout_alignEnd="@+id/textView" />
+
+    <NumberPicker
+        android:id="@+id/executionCountPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_alignTop="@+id/weightPicker"
+        android:layout_toRightOf="@+id/repeatCountPicker"
+        android:layout_toEndOf="@+id/repeatCountPicker" />
+
+    <NumberPicker
+        android:id="@+id/weightPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_below="@+id/textView3"
+        android:layout_toRightOf="@+id/executionCountPicker"
+        android:layout_toEndOf="@+id/executionCountPicker" />
+
+</RelativeLayout>

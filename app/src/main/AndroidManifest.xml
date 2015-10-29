@@ -19,11 +19,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettingsActivity"
+        <activity android:name=".ExternalActivity"
             android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ucorp.fizioapp.MainActivity" />
         </activity>
         <activity android:name=".StatisticsActivity"
             android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ucorp.fizioapp.MainActivity" />
         </activity>
     </application>
 

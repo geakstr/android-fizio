@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.ucorp.fiziodata.Exercise;
+import com.example.ucorp.fiziodata.ExerciseDao;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
@@ -15,8 +17,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class StatisticsActivity extends AppCompatActivity {
 
@@ -28,15 +28,18 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
         exerciseList = (ListView) findViewById(R.id.exerciseList);
-        List<String> exercises = Arrays.asList("Exercise one", "Exercise two", "Exercise three");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, exercises);
+        ArrayAdapter<Exercise> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ExerciseDao.getExercises());
+        exerciseList.setAdapter(adapter);
+        drawChart();
+    }
 
+    private void drawChart() {
         mChart = (LineChart) findViewById(R.id.chart);
         mChart.setDrawGridBackground(false);
 
         // no description text
         mChart.setDescription("");
-        mChart.setNoDataTextDescription("You need to provide data for the chart.");
+        mChart.setNoDataTextDescription(getString(R.string.no_data));
 
         // enable touch gestures
         mChart.setTouchEnabled(true);
@@ -62,8 +65,8 @@ public class StatisticsActivity extends AppCompatActivity {
         mChart.getAxisRight().setEnabled(false);
         setData(45, 100);
         mChart.animateX(2500, Easing.EasingOption.EaseInOutQuart);
-        exerciseList.setAdapter(adapter);
     }
+
 
     private void setData(int count, float range) {
         ArrayList<String> xVals = new ArrayList<>();

@@ -9,17 +9,16 @@
     <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text"
-        android:layout_marginBottom="150dp"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:layout_width="225dp"
-        android:layout_height="225dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:id="@+id/imageView"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/exercise"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:scaleType="fitCenter" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

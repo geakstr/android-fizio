@@ -1,5 +1,7 @@
 package com.example.ucorp.fizioapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -11,30 +13,26 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
+
+import com.example.ucorp.fiziodata.Execution;
+import com.example.ucorp.fiziodata.ExecutionDao;
+import com.example.ucorp.fiziodata.Exercise;
+import com.example.ucorp.fiziodata.ExerciseDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
 
     @Override
@@ -66,36 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -111,38 +79,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            return ExerciseDao.getSize();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.exer1_name);
-                case 1:
-                    return getString(R.string.exer2_name);
-                case 2:
-                    return getString(R.string.exer3_name);
-            }
-            return null;
+            int exerciseId = ExerciseDao.getExerciseId(position);
+            return ExerciseDao.getExerciseById(exerciseId).getName();
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -155,26 +105,99 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             ImageView imgView = (ImageView) rootView.findViewById(R.id.imageView);
-            int pageNumer = getArguments().getInt(ARG_SECTION_NUMBER);
-            switch (pageNumer) {
-                case 1:
-                    textView.setText(getString(R.string.exer1_desc));
-                    imgView.setImageResource(R.drawable.pic1);
-                    break;
-                case 2:
-                    textView.setText(getString(R.string.exer2_desc));
-                    imgView.setImageResource(R.drawable.pic2);
-                    break;
-                case 3:
-                    textView.setText(getString(R.string.exer3_desc));
-                    imgView.setImageResource(R.drawable.pic3);
-                    break;
-            }
+            int exerciseNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            final int exerciseId = ExerciseDao.getExerciseId(exerciseNumber - 1);
+            final Exercise exercise = ExerciseDao.getExerciseById(exerciseId);
+            textView.setText(exercise.getDesc());
+            imgView.setImageResource(exercise.getImageId());
+
+            imgView.setOnClickListener(new ImageView.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    changeSettings();
+                }
+
+                private void changeSettings() {
+                    View dialogView = getActivity().getLayoutInflater().inflate(R.layout.num_picker, null);
+                    NumberPicker repeatCountPicker = (NumberPicker) dialogView.findViewById(R.id.repeatCountPicker);
+                    NumberPicker executionCountPicker = (NumberPicker) dialogView.findViewById(R.id.executionCountPicker);
+                    NumberPicker weightPicker = (NumberPicker) dialogView.findViewById(R.id.weightPicker);
+                    Execution execution = ExecutionDao.getLastExecutionByExercise(ExerciseDao.getExerciseById(exerciseId));
+                    List<String> numbersList = new ArrayList<>();
+                    for (int i = 1; i < 100; i++) {
+                        numbersList.add(String.valueOf(i));
+                    }
+                    final String[] numbersInt = new String[numbersList.size()];
+                    numbersList.toArray(numbersInt);
+                    repeatCountPicker.setDisplayedValues(numbersInt);
+                    repeatCountPicker.setMaxValue(numbersInt.length - 1);
+                    repeatCountPicker.setMinValue(0);
+                    repeatCountPicker.setFormatter(new NumberPicker.Formatter() {
+                        @Override
+                        public String format(int i) {
+                            return String.format("%02d", i);
+                        }
+                    });
+                    repeatCountPicker.setValue(execution.getRepeatCount() - 1);
+
+                    executionCountPicker.setDisplayedValues(numbersInt);
+                    executionCountPicker.setMaxValue(numbersInt.length - 1);
+                    executionCountPicker.setMinValue(0);
+                    executionCountPicker.setFormatter(new NumberPicker.Formatter() {
+                        @Override
+                        public String format(int i) {
+                            return String.format("%02d", i);
+                        }
+                    });
+                    executionCountPicker.setValue(execution.getExecutionCount() - 1);
+
+                    numbersList = new ArrayList<>();
+                    for (double i = .5; i < 50.5; i += .5) {
+                        numbersList.add(String.valueOf(i));
+                    }
+                    final String[] numbersDbl = new String[numbersList.size()];
+                    numbersList.toArray(numbersDbl);
+                    weightPicker.setDisplayedValues(numbersDbl);
+                    weightPicker.setMaxValue(numbersDbl.length - 1);
+                    weightPicker.setMinValue(0);
+                    weightPicker.setValue(numbersList.indexOf(String.valueOf(execution.getWeight())));
+
+                    AlertDialog.Builder chooseSettings = new AlertDialog.Builder(getActivity());
+                    chooseSettings.setTitle(getString(R.string.settings));
+                    chooseSettings.setView(dialogView);
+                    chooseSettings.setPositiveButton(getString(R.string.ok),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    AlertDialog alertDialog = (AlertDialog) dialog;
+                                    sendInfo(alertDialog);
+                                }
+
+                                private void sendInfo(AlertDialog alertDialog) {
+                                    Intent intent = new Intent(getContext(), ExternalActivity.class);
+                                    NumberPicker repeatCountPicker = (NumberPicker) alertDialog.findViewById(R.id.repeatCountPicker);
+                                    NumberPicker executionCountPicker = (NumberPicker) alertDialog.findViewById(R.id.executionCountPicker);
+                                    NumberPicker weightPicker = (NumberPicker) alertDialog.findViewById(R.id.weightPicker);
+                                    intent.putExtra("EXERCISE_ID", exerciseId);
+                                    intent.putExtra("REPEAT_COUNT", Integer.parseInt(numbersInt[repeatCountPicker.getValue()]));
+                                    intent.putExtra("EXECUTION_COUNT", Integer.parseInt(numbersInt[executionCountPicker.getValue()]));
+                                    intent.putExtra("WEIGHT", Double.parseDouble(numbersDbl[weightPicker.getValue()]));
+                                    startActivity(intent);
+                                }
+                            });
+                    chooseSettings.setNegativeButton(getString(R.string.cancel),
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                    chooseSettings.show();
+                }
+            });
             return rootView;
         }
     }
