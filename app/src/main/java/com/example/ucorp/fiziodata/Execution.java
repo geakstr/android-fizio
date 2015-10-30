@@ -7,11 +7,11 @@ public class Execution {
     private int id;
     private int repeatCount;
     private int executionCount;
-    private double weight;
+    private float weight;
     private Date date;
     private int exerciseId;
 
-    public Execution(int id, int repeatCount, int executionCount, double weight, Date date, int exerciseId) {
+    public Execution(int id, int repeatCount, int executionCount, float weight, Date date, int exerciseId) {
         this.id = id;
         this.repeatCount = repeatCount;
         this.executionCount = executionCount;
@@ -44,11 +44,11 @@ public class Execution {
         this.executionCount = executionCount;
     }
 
-    public double getWeight() {
+    public float getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(float weight) {
         this.weight = weight;
     }
 

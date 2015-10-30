@@ -5,13 +5,13 @@ public class Exercise {
     private int id;
     private String name;
     private String desc;
-    private int imageId;
+    private int videoId;
 
-    public Exercise(int id, String name, String desc, int imageId) {
+    public Exercise(int id, String name, String desc, int videoId) {
         this.id = id;
         this.name = name;
         this.desc = desc;
-        this.imageId = imageId;
+        this.videoId = videoId;
     }
 
     public int getId() {
@@ -38,12 +38,12 @@ public class Exercise {
         this.desc = desc;
     }
 
-    public int getImageId() {
-        return imageId;
+    public int getVideoId() {
+        return videoId;
     }
 
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
+    public void setVideoId(int videoId) {
+        this.videoId = videoId;
     }
 
     @Override

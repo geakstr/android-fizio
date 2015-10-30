@@ -6,11 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ExerciseDao {
-
     private static List<Exercise> exercises = Arrays.asList(
-            new Exercise(23, "Упражнение один", "Описание упражнения один", R.drawable.pic1),
-            new Exercise(42, "Упражнение два", "Описание упражнения два", R.drawable.pic2),
-            new Exercise(55, "Упражнение три", "Описание упражнения три", R.drawable.pic3));
+            new Exercise(1, "Упражнение один", "Описание упражнения один", R.raw.big_buck_bunny),
+            new Exercise(2, "Упражнение два", "Описание упражнения два", R.raw.big_buck_bunny),
+            new Exercise(3, "Упражнение три", "Описание упражнения три", R.raw.big_buck_bunny));
 
     public static List<Exercise> getExercises() {
         return exercises;

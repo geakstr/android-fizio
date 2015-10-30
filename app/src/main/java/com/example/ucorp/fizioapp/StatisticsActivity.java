@@ -3,6 +3,8 @@ package com.example.ucorp.fizioapp;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -27,37 +29,80 @@ import java.util.List;
 
 public class StatisticsActivity extends AppCompatActivity {
 
-    ListView exerciseList;
+    private ListView exerciseList;
     private LineChart mChart;
-    private int exerciseId = 23;
+    private int exerciseId;
+
+    private RadioButton radio_afterYear;
+    private RadioButton radio_afterMonth;
+    private RadioButton radio_afterWeek;
+
+    private RadioButton radio_repeatCount;
+    private RadioButton radio_executionCount;
+    private RadioButton radio_weight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
         exerciseList = (ListView) findViewById(R.id.exerciseList);
-        ArrayAdapter<Exercise> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ExerciseDao.getExercises());
+
+        radio_afterYear  = (RadioButton) findViewById(R.id.afterYear);
+        radio_afterMonth = (RadioButton) findViewById(R.id.afterMonth);
+        radio_afterWeek  = (RadioButton) findViewById(R.id.afterWeek);
+
+        radio_repeatCount    = (RadioButton) findViewById(R.id.repeatCount);
+        radio_executionCount = (RadioButton) findViewById(R.id.executionCount);
+        radio_weight         = (RadioButton) findViewById(R.id.weight);
+
+        final List<Exercise> excercises = ExerciseDao.getExercises();
+        if (excercises != null && excercises.size() > 0) {
+            exerciseId = excercises.get(0).getId();
+            drawChart();
+        }
+        final ArrayAdapter<Exercise> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ExerciseDao.getExercises());
         exerciseList.setAdapter(adapter);
+
+        setRadioButtonsListeners();
+        exerciseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                exerciseId = adapter.getItem(position).getId();
+                drawChart();
+            }
+        });
         drawChart();
     }
 
+    private void setRadioButtonsListeners() {
+        View.OnClickListener changeListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawChart();
+            }
+        };
+
+        radio_afterYear .setOnClickListener(changeListener);
+        radio_afterMonth.setOnClickListener(changeListener);
+        radio_afterWeek .setOnClickListener(changeListener);
+
+        radio_repeatCount   .setOnClickListener(changeListener);
+        radio_executionCount.setOnClickListener(changeListener);
+        radio_weight        .setOnClickListener(changeListener);
+    }
+
     private void drawChart() {
-        RadioButton repeatCount = (RadioButton) findViewById(R.id.repeatCount);
-        RadioButton executionCount = (RadioButton) findViewById(R.id.executionCount);
-        RadioButton weight = (RadioButton) findViewById(R.id.weight);
-        RadioButton afterYear = (RadioButton) findViewById(R.id.afterYear);
-        RadioButton afterMonth = (RadioButton) findViewById(R.id.afterMonth);
         Exercise exercise = ExerciseDao.getExerciseById(exerciseId);
         List<Execution> executions = ExecutionDao.getExecutionsByExercise(exercise);
         List<Execution> executionsByTime = new ArrayList<>();
         Date compareDate = new Date();
         Calendar cal = Calendar.getInstance();
-        if (afterYear.isChecked()) {
+        if (radio_afterYear.isChecked()) {
             cal.setTime(compareDate);
             cal.add(Calendar.YEAR, -1);
             cal.add(Calendar.DAY_OF_YEAR, -1);
             compareDate = cal.getTime();
-        } else if (afterMonth.isChecked()) {
+        } else if (radio_afterMonth.isChecked()) {
             cal.setTime(compareDate);
             cal.add(Calendar.MONTH, -1);
             cal.add(Calendar.DAY_OF_YEAR, -1);
@@ -98,8 +143,6 @@ public class StatisticsActivity extends AppCompatActivity {
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-        leftAxis.setAxisMaxValue(50f);
-        leftAxis.setAxisMinValue(0f);
         leftAxis.setStartAtZero(false);
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
         leftAxis.setDrawLimitLinesBehindData(true);
@@ -108,12 +151,42 @@ public class StatisticsActivity extends AppCompatActivity {
         ArrayList<String> xVals = new ArrayList<>();
         ArrayList<Entry> yVals = new ArrayList<>();
         int i = 0;
+        float maxY = -1, minY = Float.MAX_VALUE;
         for (Execution e : executionsByTime) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
             xVals.add(sdf.format(e.getDate()));
-            yVals.add(new Entry(e.getExecutionCount(), i));
+            if (radio_executionCount.isChecked()) {
+                int executionCount = e.getExecutionCount();
+                if (executionCount > maxY) {
+                    maxY = executionCount;
+                }
+                if (executionCount < minY) {
+                    minY = executionCount;
+                }
+                yVals.add(new Entry(executionCount, i));
+            } else if (radio_repeatCount.isChecked()) {
+                int repeatCount = e.getRepeatCount();
+                if (repeatCount > maxY) {
+                    maxY = repeatCount;
+                }
+                if (repeatCount < minY) {
+                    minY = repeatCount;
+                }
+                yVals.add(new Entry(repeatCount, i));
+            } else if (radio_weight.isChecked()) {
+                float weight = e.getWeight();
+                if (weight > maxY) {
+                    maxY = weight;
+                }
+                if (weight < minY) {
+                    minY = weight;
+                }
+                yVals.add(new Entry(weight, i));
+            }
             i++;
         }
+        leftAxis.setAxisMaxValue(maxY + 1);
+        leftAxis.setAxisMinValue(minY - 1);
 
         // create a dataset and give it a type
         LineDataSet set1 = new LineDataSet(yVals, exercise.getName());
@@ -138,7 +211,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
         // set data
         mChart.setData(data);
-        mChart.animateX(2000, Easing.EasingOption.EaseInOutQuart);
+        mChart.animateX(1, Easing.EasingOption.EaseInOutQuart);
     }
 
 }

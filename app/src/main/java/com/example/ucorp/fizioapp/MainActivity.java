@@ -3,6 +3,8 @@ package com.example.ucorp.fizioapp;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -13,14 +15,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.example.ucorp.fiziodata.Execution;
 import com.example.ucorp.fiziodata.ExecutionDao;
@@ -107,19 +110,29 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            ImageView imgView = (ImageView) rootView.findViewById(R.id.imageView);
+            final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            final TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            final VideoView videoView = (VideoView) rootView.findViewById(R.id.videoView);
             int exerciseNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             final int exerciseId = ExerciseDao.getExerciseId(exerciseNumber - 1);
             final Exercise exercise = ExerciseDao.getExerciseById(exerciseId);
             textView.setText(exercise.getDesc());
-            imgView.setImageResource(exercise.getImageId());
 
-            imgView.setOnClickListener(new ImageView.OnClickListener() {
+            Uri uri = Uri.parse("android.resource://" + getActivity().getPackageName() + "/" + exercise.getVideoId());
+            videoView.setVideoURI(uri);
+            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
-                public void onClick(View view) {
+                public void onPrepared(MediaPlayer mp) {
+                    videoView.start();
+                }
+            });
+
+            videoView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent event) {
                     changeSettings();
+
+                    return false;
                 }
 
                 private void changeSettings() {

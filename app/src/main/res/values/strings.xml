@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">FizioApp</string>
-    <string name="repeatCount">Количество подходов</string>
+    <string name="repeatCount">Подходы</string>
     <string name="executionCount">Количество выполнений</string>
     <string name="repeatCountShort">Подходов</string>
     <string name="executionCountShort">Раз</string>
