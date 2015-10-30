@@ -13,7 +13,8 @@ public class ExecutionDao {
 
     private static List<Execution> exercises = Arrays.asList(
             new Execution(43, 5, 10, 3., DateStub("19.10.2015 10:20:56"), 23),
-            new Execution(44, 6, 11, 3.5, DateStub("20.10.2015 10:20:56"), 23),
+            new Execution(44, 6, 8, 3.5, DateStub("20.10.2015 10:20:56"), 23),
+            new Execution(44, 12, 12, 3.5, DateStub("21.10.2015 10:20:56"), 23),
             new Execution(99, 7, 8, 1.5, DateStub("21.10.2015 12:11:48"), 42),
             new Execution(136, 6, 4, 2., DateStub("23.10.2015 09:01:03"), 55));
 

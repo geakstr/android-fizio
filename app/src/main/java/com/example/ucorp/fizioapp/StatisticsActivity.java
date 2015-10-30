@@ -5,7 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.RadioButton;
 
+import com.example.ucorp.fiziodata.Execution;
+import com.example.ucorp.fiziodata.ExecutionDao;
 import com.example.ucorp.fiziodata.Exercise;
 import com.example.ucorp.fiziodata.ExerciseDao;
 import com.github.mikephil.charting.animation.Easing;
@@ -16,12 +19,17 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class StatisticsActivity extends AppCompatActivity {
 
     ListView exerciseList;
     private LineChart mChart;
+    private int exerciseId = 23;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +42,39 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void drawChart() {
+        RadioButton repeatCount = (RadioButton) findViewById(R.id.repeatCount);
+        RadioButton executionCount = (RadioButton) findViewById(R.id.executionCount);
+        RadioButton weight = (RadioButton) findViewById(R.id.weight);
+        RadioButton afterYear = (RadioButton) findViewById(R.id.afterYear);
+        RadioButton afterMonth = (RadioButton) findViewById(R.id.afterMonth);
+        Exercise exercise = ExerciseDao.getExerciseById(exerciseId);
+        List<Execution> executions = ExecutionDao.getExecutionsByExercise(exercise);
+        List<Execution> executionsByTime = new ArrayList<>();
+        Date compareDate = new Date();
+        Calendar cal = Calendar.getInstance();
+        if (afterYear.isChecked()) {
+            cal.setTime(compareDate);
+            cal.add(Calendar.YEAR, -1);
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            compareDate = cal.getTime();
+        } else if (afterMonth.isChecked()) {
+            cal.setTime(compareDate);
+            cal.add(Calendar.MONTH, -1);
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            compareDate = cal.getTime();
+        } else {
+            cal.setTime(compareDate);
+            cal.add(Calendar.WEEK_OF_MONTH, -1);
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            compareDate = cal.getTime();
+        }
+        for (Execution e : executions) {
+            if (e.getDate().after(compareDate)) {
+                executionsByTime.add(e);
+            }
+        }
+
+
         mChart = (LineChart) findViewById(R.id.chart);
         mChart.setDrawGridBackground(false);
 
@@ -57,33 +98,25 @@ public class StatisticsActivity extends AppCompatActivity {
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-        leftAxis.setAxisMaxValue(220f);
-        leftAxis.setAxisMinValue(-50f);
+        leftAxis.setAxisMaxValue(50f);
+        leftAxis.setAxisMinValue(0f);
         leftAxis.setStartAtZero(false);
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
         leftAxis.setDrawLimitLinesBehindData(true);
         mChart.getAxisRight().setEnabled(false);
-        setData(45, 100);
-        mChart.animateX(2500, Easing.EasingOption.EaseInOutQuart);
-    }
 
-
-    private void setData(int count, float range) {
         ArrayList<String> xVals = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            xVals.add((i) + "");
-        }
-
         ArrayList<Entry> yVals = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult) + 3;
-            yVals.add(new Entry(val, i));
+        int i = 0;
+        for (Execution e : executionsByTime) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+            xVals.add(sdf.format(e.getDate()));
+            yVals.add(new Entry(e.getExecutionCount(), i));
+            i++;
         }
 
         // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
+        LineDataSet set1 = new LineDataSet(yVals, exercise.getName());
 
         // set the line to be drawn like this "- - - - - -"
         set1.enableDashedLine(10f, 5f, 0f);
@@ -105,6 +138,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
         // set data
         mChart.setData(data);
+        mChart.animateX(2000, Easing.EasingOption.EaseInOutQuart);
     }
 
 }

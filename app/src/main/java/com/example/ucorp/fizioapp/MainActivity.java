@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     NumberPicker weightPicker = (NumberPicker) dialogView.findViewById(R.id.weightPicker);
                     Execution execution = ExecutionDao.getLastExecutionByExercise(ExerciseDao.getExerciseById(exerciseId));
                     List<String> numbersList = new ArrayList<>();
-                    for (int i = 1; i < 100; i++) {
+                    for (int i = 1; i < 51; i++) {
                         numbersList.add(String.valueOf(i));
                     }
                     final String[] numbersInt = new String[numbersList.size()];

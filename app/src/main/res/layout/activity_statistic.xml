@@ -17,7 +17,8 @@
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/exerciseList" />
+            android:id="@+id/exerciseList"
+            android:choiceMode="singleChoice" />
     </FrameLayout>
     <View
         android:id="@+id/verticalLine"
