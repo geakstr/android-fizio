@@ -20,7 +20,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.VideoView;

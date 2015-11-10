@@ -7,10 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class ExecutionDao {
-    private static Random rnd = new Random(47);
+
     private static List<Execution> exercises = new ArrayList<Execution>() {{
         //week
         this.add(new Execution(1,  5,  10, 3.0f, DateStub("23.10.2015 10:20:56"), 1));
